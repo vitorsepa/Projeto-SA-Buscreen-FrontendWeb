@@ -8,9 +8,10 @@ import {
   Box,
   Alert,
   CircularProgress,
+  Link
 } from '@mui/material';
 import { userAPI } from '../services/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -24,48 +25,42 @@ const Login = () => {
     setCarregando(true);
     setErro('');
 
-    if (!email || !senha) {
-      setErro('Por favor, preencha todos os campos.');
-      setCarregando(false);
-      return;
-    }
-
     try {
-        console.log('Iniciando login...');
-        console.log('Email:', email);
+      console.log('🔍 Iniciando login...');
+      
+      const response = await userAPI.login(email, senha);
+      console.log('✅ Resposta da API:', response.data);
+      
+      if (response.data.usuario) {
+        localStorage.setItem('usuario', JSON.stringify(response.data.usuario));
+        console.log('💾 Usuário salvo no localStorage');
         
-        const response = await userAPI.login(email, senha);
-        console.log('Resposta da API:', response.data);
-        
-        if (response.data.usuario) {
-          localStorage.setItem('usuario', JSON.stringify(response.data.usuario));
-          console.log('Usuário salvo no localStorage');
-          
-          window.location.href = '/dashboard';
-          return;
-
-        } else {
-          setErro('Resposta da API sem dados de usuário');
-        }
-
+        window.location.href = '/dashboard';
+        return;
+      } else {
+        setErro('Resposta da API sem dados de usuário');
+      }
+      
     } catch (error) {
-      console.error('Erro completo no login:', error);
+      console.error('❌ Erro completo:', error);
       
       if (error.code === 'ECONNABORTED') {
-        setErro('Tempo de conexão esgotado. O servidor pode estar iniciando. Tente novamente em alguns segundos.');
+        setErro('Tempo de conexão esgotado. O servidor pode estar iniciando.');
       } else if (error.response) {
-        // Erro da API
-        setErro(error.response.data?.mensagem || 'Erro ao fazer login. Verifique suas credenciais.');
+        setErro(`Erro ${error.response.status}: ${error.response.data?.mensagem || 'Credenciais inválidas'}`);
       } else if (error.request) {
-        // Erro de rede
-        setErro('Erro de conexão. Verifique se o servidor está rodando.');
+        setErro('Erro de conexão. Verifique: 1) Sua internet 2) Se o servidor está online');
       } else {
-        // Outros erros
-        setErro('Erro inesperado. Tente novamente.');
+        setErro('Erro inesperado: ' + error.message);
       }
     } finally {
       setCarregando(false);
     }
+  };
+
+  const testWithExample = () => {
+    setEmail('teste@gmail.com');
+    setSenha('123456');
   };
 
   return (
@@ -80,13 +75,7 @@ const Login = () => {
       >
         <Paper elevation={3} sx={{ padding: 4, width: '100%' }}>
           <Typography component="h1" variant="h4" align="center" gutterBottom color="primary">
-            BusScreen
-          </Typography>
-          <Typography component="h2" variant="h5" align="center" gutterBottom>
-            Sistema de Gerenciamento
-          </Typography>
-          <Typography component="p" variant="body2" align="center" color="textSecondary" sx={{ mb: 3 }}>
-            Faça login para acessar o sistema
+            🚌 BusScreen
           </Typography>
 
           {erro && (
@@ -133,12 +122,18 @@ const Login = () => {
             </Button>
           </Box>
 
-          <Box sx={{ mt: 2, p: 2, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
-            <Typography variant="caption" color="textSecondary">
-              <strong>Para teste use:</strong><br />
-              Email: teste@gmail.com<br />
-              Senha: 123456
-            </Typography>
+          {/* Link para cadastro */}
+          <Box sx={{ textAlign: 'center', mt: 2 }}>
+            <Link component={RouterLink} to="/cadastro" variant="body2">
+              Não tem uma conta? Cadastre-se
+            </Link>
+          </Box>
+
+          {/* Botão de teste rápido */}
+          <Box sx={{ textAlign: 'center', mt: 2 }}>
+            <Button variant="outlined" size="small" onClick={testWithExample}>
+              Preencher com dados de teste
+            </Button>
           </Box>
         </Paper>
       </Box>
