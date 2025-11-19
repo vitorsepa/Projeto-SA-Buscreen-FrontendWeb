@@ -1,29 +1,45 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Container,
-  Typography,
   Box,
-  Button,
-  Paper,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
-  CircularProgress
+  Typography,
+  Button
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import {
   DirectionsBus,
   ListAlt,
-  Person,
-  Add
+  Person
 } from '@mui/icons-material';
+
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+const defaultIcon = L.icon({
+  iconUrl: markerIcon,
+  iconRetinaUrl: markerIcon2x,
+  shadowUrl: markerShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const usuario = JSON.parse(localStorage.getItem('usuario'));
+  const [horaAtual, setHoraAtual] = useState(new Date());
 
-  // Verifica se o usuário está logado
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHoraAtual(new Date());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     if (!usuario || !usuario.id) {
       navigate('/login');
@@ -32,162 +48,185 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('usuario');
-    // Força o redirecionamento
     window.location.href = '/login';
   };
 
-  // Loading enquanto verifica
   if (!usuario || !usuario.id) {
     return (
-      <Container>
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-          <CircularProgress />
-        </Box>
-      </Container>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Typography>Carregando...</Typography>
+      </Box>
     );
   }
 
-  const menuItems = [
-    {
-      title: 'Ver Linhas',
-      description: 'Visualize todas as linhas de ônibus cadastradas',
-      icon: <ListAlt fontSize="large" color="primary" />,
-      action: () => navigate('/linhas'),
-      color: '#1976d2'
-    },
-    {
-      title: 'Cadastrar Linha',
-      description: 'Adicione uma nova linha de ônibus ao sistema',
-      icon: <Add fontSize="large" color="secondary" />,
-      action: () => navigate('/cadastro-linha'),
-      color: '#dc004e'
-    },
-    {
-      title: 'Minha Conta',
-      description: 'Veja e edite suas informações de usuário',
-      icon: <Person fontSize="large" color="success" />,
-      action: () => navigate('/perfil'),
-      color: '#2e7d32'
-    }
-  ];
-
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ mt: 4, mb: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-          <Box>
-            <Typography variant="h3" component="h1" gutterBottom>
-              🚌 BusScreen
+    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#FF8F4A',
+        color: '#fff',
+        px: 3,
+        py: 1.5,
+        fontWeight: 'bold'
+      }}>
+        <Typography variant="h6" sx={{ cursor: 'default' }}>
+          Buscreen
+        </Typography>
+
+        <Box sx={{ display: 'flex', gap: 3 }}>
+          {['Home', 'Linhas', 'Perfil', 'Sobre nós'].map((item) => (
+            <Typography
+              key={item}
+              sx={{
+                cursor: 'pointer',
+                color: '#fff',
+                fontWeight: 600,
+                '&:hover': { textDecoration: 'underline' }
+              }}
+              onClick={() => {
+                const path = item.toLowerCase().replace(' ', '-');
+                navigate(`/${path === 'home' ? '' : path}`);
+              }}
+            >
+              {item}
             </Typography>
-            <Typography variant="h6" color="textSecondary">
-              Bem-vindo, <strong>{usuario.nome}</strong>!
-            </Typography>
-            <Typography variant="body2" color="textSecondary">
-              {usuario.email}
-            </Typography>
-          </Box>
-          <Button variant="outlined" onClick={handleLogout}>
-            Sair
-          </Button>
+          ))}
         </Box>
 
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={4}>
-            <Card>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <DirectionsBus color="primary" sx={{ mr: 2 }} />
-                  <Typography color="textSecondary" gutterBottom>
-                    Linhas Cadastradas
-                  </Typography>
-                </Box>
-                <Typography variant="h4" component="div">
-                  3
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Total no sistema
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Card>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Person color="success" sx={{ mr: 2 }} />
-                  <Typography color="textSecondary" gutterBottom>
-                    Sua Conta
-                  </Typography>
-                </Box>
-                <Typography variant="h6" component="div">
-                  Ativa
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Desde: {new Date().toLocaleDateString('pt-BR')}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Card>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <ListAlt color="secondary" sx={{ mr: 2 }} />
-                  <Typography color="textSecondary" gutterBottom>
-                    Companhias
-                  </Typography>
-                </Box>
-                <Typography variant="h6" component="div">
-                  3
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Biguaçu, Jotur, Estrela
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-
-        {/* Menu Principal */}
-        <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
-          Menu Principal
-        </Typography>
-        
-        <Grid container spacing={3}>
-          {menuItems.map((item, index) => (
-            <Grid item xs={12} md={4} key={index}>
-              <Card 
-                sx={{ 
-                  height: '100%',
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                    boxShadow: 3
-                  }
-                }}
-                onClick={item.action}
-              >
-                <CardContent sx={{ textAlign: 'center', pb: 1 }}>
-                  {item.icon}
-                  <Typography variant="h6" component="div" sx={{ mt: 1 }}>
-                    {item.title}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {item.description}
-                  </Typography>
-                </CardContent>
-                <CardActions sx={{ justifyContent: 'center', pb: 2 }}>
-                  <Button size="small" variant="outlined">
-                    Acessar
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+        <Button variant="contained" color="error" onClick={handleLogout}>
+          Sair
+        </Button>
       </Box>
-    </Container>
+
+      <Box sx={{ flexGrow: 1, py: 3, px: 3, backgroundColor: '#FFB881', display: 'flex', gap: 3 }}>
+        
+        {/* Mapa */}
+        <Box sx={{
+          flex: 1,
+          backgroundColor: '#fff',
+          borderRadius: 2,
+          p: 2,
+          boxShadow: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+          minHeight: 400,
+        }}>
+          <Typography variant="h6" fontWeight="bold" sx={{ color: '#7f3c00' }}>
+            Ponto Selecionado: Rua Arnaldo Silveira de Souza
+          </Typography>
+
+          <Box sx={{ flexGrow: 1, borderRadius: 1, overflow: 'hidden' }}>
+            <MapContainer
+              center={[-27.6207115, -48.6464041]}
+              zoom={18}
+              style={{ height: '100%', width: '100%' }}
+            >
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              />
+              <Marker position={[-27.6207115, -48.6464041]} icon={defaultIcon}>
+                <Popup>Rua Arnaldo Silveira de Souza</Popup>
+              </Marker>
+            </MapContainer>
+          </Box>
+        </Box>
+
+        <Box sx={{
+          width: 320,
+          backgroundColor: '#fff',
+          borderRadius: 2,
+          p: 3,
+          boxShadow: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 3,
+          color: '#7f3c00',
+          minHeight: 400,
+        }}>
+          <Typography variant="h4" fontWeight="bold">
+            {horaAtual.toLocaleTimeString()}
+          </Typography>
+
+          <Box sx={{
+            backgroundColor: '#fff',
+            borderRadius: 2,
+            boxShadow: 2,
+            width: '100%',
+            p: 2,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+            color: '#222',
+          }}>
+            <ListAlt color="primary" />
+            <Box>
+              <Typography fontWeight="bold">Linhas cadastradas</Typography>
+              <Typography variant="body2">3 linhas disponíveis</Typography>
+            </Box>
+          </Box>
+
+          <Box sx={{
+            backgroundColor: '#fff',
+            borderRadius: 2,
+            boxShadow: 2,
+            width: '100%',
+            p: 2,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+            color: '#222',
+          }}>
+            <Person color="success" />
+            <Box>
+              <Typography fontWeight="bold">Conta</Typography>
+              <Typography variant="body2">
+                Ativa desde {new Date().toLocaleDateString('pt-BR')}
+              </Typography>
+            </Box>
+          </Box>
+
+          <Box sx={{
+            backgroundColor: '#fff',
+            borderRadius: 2,
+            boxShadow: 2,
+            width: '100%',
+            p: 2,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+            color: '#222',
+          }}>
+            <DirectionsBus color="error" />
+            <Box>
+              <Typography fontWeight="bold">Companhias</Typography>
+              <Typography variant="body2">Biguaçu, Jotur, Estrela</Typography>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+
+      <Box
+        component="footer"
+        sx={{
+          textAlign: 'center',
+          py: 2,
+          backgroundColor: '#FF8F4A',
+          color: '#fff',
+          fontWeight: 'bold',
+          borderTop: '2px solid #e07a38',
+          mt: 'auto'
+        }}
+      >
+        © 2025 Buscreen. Todos os direitos reservados.
+      </Box>
+
+    </Box>
   );
 };
 
