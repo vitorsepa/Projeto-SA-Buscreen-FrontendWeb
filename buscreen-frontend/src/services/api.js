@@ -16,10 +16,10 @@ export const userAPI = {
 };
 
 export const linhasAPI = {
-    getAll: () => api.get('/linhas'),
-    getById: (id) => api.get(`/linhas/${id}`),
-    create: (linhaData) => api.post('/linhas/cadastro', linhaData),
-    search: (termo) => api.get(`/linhas?search=${termo}`),
-  };
+  getAll: () => api.get('/linhas'),
+  getById: (id) => api.get(`/linhas/${id}`),
+  create: (linhaData) => api.post('/linhas/cadastro', linhaData),
+  delete: (id) => api.delete(`/linhas/${id}`),
+};
 
 export default api;

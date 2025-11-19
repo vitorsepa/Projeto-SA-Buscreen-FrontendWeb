@@ -7,6 +7,7 @@ import CadastroUsuario from './pages/CadastroUsuario';
 import Dashboard from './pages/Dashboard';
 import Linhas from './pages/Linhas';
 import CadastroLinha from './pages/CadastroLinha';
+import Perfil from './pages/Perfil';
 
 const theme = createTheme({
   palette: {
@@ -19,7 +20,6 @@ const theme = createTheme({
   },
 });
 
-// Componente para rotas protegidas
 const ProtectedRoute = ({ children }) => {
     const usuario = JSON.parse(localStorage.getItem('usuario'));
     
@@ -30,7 +30,6 @@ const ProtectedRoute = ({ children }) => {
     return children;
   };
   
-  // E use assim nas rotas:
   <Route 
     path="/dashboard" 
     element={
@@ -40,8 +39,6 @@ const ProtectedRoute = ({ children }) => {
     } 
   />
 
-// Verifica se o usuário está logado
-// Verifica se o usuário está realmente logado
 const isAuthenticated = () => {
     const usuario = localStorage.getItem('usuario');
     if (!usuario) return false;
@@ -61,13 +58,11 @@ function App() {
       <CssBaseline />
       <Router>
         <Routes>
-          {/* Rota raiz redireciona para login ou dashboard */}
           <Route 
             path="/" 
             element={isAuthenticated() ? <Navigate to="/dashboard" /> : <Navigate to="/login" />} 
           />
           
-          {/* Rotas públicas */}
           <Route 
             path="/login" 
             element={isAuthenticated() ? <Navigate to="/dashboard" /> : <Login />} 
@@ -77,7 +72,6 @@ function App() {
             element={isAuthenticated() ? <Navigate to="/dashboard" /> : <CadastroUsuario />} 
           />
           
-          {/* Rotas protegidas */}
           <Route 
             path="/dashboard" 
             element={isAuthenticated() ? <Dashboard /> : <Navigate to="/login" />} 
@@ -90,10 +84,16 @@ function App() {
             path="/cadastro-linha" 
             element={isAuthenticated() ? <CadastroLinha /> : <Navigate to="/login" />} 
           />
+          <Route 
+            path="/perfil" 
+            element={isAuthenticated() ? <Perfil /> : <Navigate to="/login" />} 
+          />
         </Routes>
       </Router>
     </ThemeProvider>
   );
 }
+
+
 
 export default App;

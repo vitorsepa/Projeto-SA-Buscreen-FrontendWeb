@@ -18,9 +18,14 @@ import {
   Card,
   CardContent,
   Grid,
-  IconButton
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText
 } from '@mui/material';
-import { Search, Clear, DirectionsBus } from '@mui/icons-material';
+import { Search, Clear, DirectionsBus, Delete, Add } from '@mui/icons-material';
 import { linhasAPI } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
@@ -30,8 +35,9 @@ const Linhas = () => {
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState('');
   const [idPesquisa, setIdPesquisa] = useState('');
+  const [dialogAberto, setDialogAberto] = useState(false);
+  const [linhaParaExcluir, setLinhaParaExcluir] = useState(null);
   const navigate = useNavigate();
-
 
   useEffect(() => {
     carregarLinhas();
@@ -85,6 +91,39 @@ const Linhas = () => {
     carregarLinhas();
   };
 
+  const abrirDialogExclusao = (linha) => {
+    setLinhaParaExcluir(linha);
+    setDialogAberto(true);
+  };
+
+  const fecharDialogExclusao = () => {
+    setDialogAberto(false);
+    setLinhaParaExcluir(null);
+  };
+
+  const excluirLinha = async () => {
+    if (!linhaParaExcluir) return;
+
+    setCarregando(true);
+    try {
+      console.log('Excluindo linha:', linhaParaExcluir.id);
+
+      const novasLinhas = linhas.filter(linha => linha.id !== linhaParaExcluir.id);
+      setLinhas(novasLinhas);
+      
+      setErro('');
+      fecharDialogExclusao();
+      
+      setErro(`Linha "${linhaParaExcluir.nome_linha}" excluída com sucesso!`);
+      setTimeout(() => setErro(''), 3000);
+      
+    } catch (error) {
+      setErro('Erro ao excluir linha: ' + error.message);
+    } finally {
+      setCarregando(false);
+    }
+  };
+
   const formatarData = (dataString) => {
     return new Date(dataString).toLocaleDateString('pt-BR');
   };
@@ -92,7 +131,6 @@ const Linhas = () => {
   return (
     <Container maxWidth="lg">
       <Box sx={{ mt: 4, mb: 4 }}>
-
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           <Typography variant="h4" component="h1">
             Linhas de Ônibus
@@ -100,7 +138,7 @@ const Linhas = () => {
           <Button 
             variant="contained" 
             onClick={() => navigate('/cadastro-linha')}
-            startIcon={<DirectionsBus />}
+            startIcon={<Add />}
           >
             Nova Linha
           </Button>
@@ -139,53 +177,49 @@ const Linhas = () => {
         </Paper>
 
         {erro && (
-          <Alert severity="error" sx={{ mb: 3 }}>
+          <Alert severity={erro.includes('excluída') ? 'success' : 'error'} sx={{ mb: 3 }}>
             {erro}
           </Alert>
         )}
 
         <Grid container spacing={3} sx={{ mb: 3 }}>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6}>
             <Card>
               <CardContent>
-                <Typography color="textSecondary" gutterBottom>
-                  Total de Linhas
-                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <DirectionsBus color="primary" sx={{ mr: 2 }} />
+                  <Typography color="textSecondary" gutterBottom>
+                    Total de Linhas
+                  </Typography>
+                </Box>
                 <Typography variant="h4" component="div">
                   {linhas.length}
                 </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Linhas cadastradas no sistema
+                </Typography>
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6}>
             <Card>
               <CardContent>
-                <Typography color="textSecondary" gutterBottom>
-                  Companhias
-                </Typography>
-                <Typography variant="h6" component="div">
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <DirectionsBus color="secondary" sx={{ mr: 2 }} />
+                  <Typography color="textSecondary" gutterBottom>
+                    Companhias
+                  </Typography>
+                </Box>
+                <Typography variant="h4" component="div">
                   {[...new Set(linhas.map(l => l.companhia))].length}
                 </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Card>
-              <CardContent>
-                <Typography color="textSecondary" gutterBottom>
-                  Lotação Média
-                </Typography>
-                <Typography variant="h6" component="div">
-                  {linhas.length > 0 
-                    ? Math.round(linhas.reduce((acc, l) => acc + l.lotacao_maxima, 0) / linhas.length)
-                    : 0
-                  } passageiros
+                <Typography variant="body2" color="textSecondary">
+                  Companhias diferentes
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
         </Grid>
-
 
         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
           <TableContainer>
@@ -195,15 +229,16 @@ const Linhas = () => {
                   <TableCell><strong>ID</strong></TableCell>
                   <TableCell><strong>Companhia</strong></TableCell>
                   <TableCell><strong>Nome da Linha</strong></TableCell>
-                  <TableCell><strong>Lotacao Máxima</strong></TableCell>
+                  <TableCell><strong>Lotação Máxima</strong></TableCell>
                   <TableCell><strong>Horário</strong></TableCell>
                   <TableCell><strong>Data de Criação</strong></TableCell>
+                  <TableCell><strong>Ações</strong></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {carregando ? (
                   <TableRow>
-                    <TableCell colSpan={6} align="center">
+                    <TableCell colSpan={7} align="center">
                       <CircularProgress />
                       <Typography variant="body2" sx={{ mt: 1 }}>
                         Carregando linhas...
@@ -232,11 +267,18 @@ const Linhas = () => {
                     </TableCell>
                     <TableCell>{linhaFiltrada.horario}</TableCell>
                     <TableCell>{formatarData(linhaFiltrada.data_criacao)}</TableCell>
+                    <TableCell>
+                      <IconButton 
+                        color="error" 
+                        onClick={() => abrirDialogExclusao(linhaFiltrada)}
+                        disabled={carregando}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                 ) : linhas.length > 0 ? (
-
-
-                    linhas.map((linha) => (
+                  linhas.map((linha) => (
                     <TableRow hover key={linha.id}>
                       <TableCell>
                         <Chip label={linha.id} color="primary" size="small" />
@@ -258,11 +300,20 @@ const Linhas = () => {
                       </TableCell>
                       <TableCell>{linha.horario}</TableCell>
                       <TableCell>{formatarData(linha.data_criacao)}</TableCell>
+                      <TableCell>
+                        <IconButton 
+                          color="error" 
+                          onClick={() => abrirDialogExclusao(linha)}
+                          disabled={carregando}
+                        >
+                          <Delete />
+                        </IconButton>
+                      </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} align="center">
+                    <TableCell colSpan={7} align="center">
                       <Typography variant="body1" color="textSecondary">
                         Nenhuma linha cadastrada
                       </Typography>
@@ -290,6 +341,39 @@ const Linhas = () => {
           </Button>
         </Box>
       </Box>
+
+      <Dialog
+        open={dialogAberto}
+        onClose={fecharDialogExclusao}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          Confirmar Exclusão
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Tem certeza que deseja excluir a linha <strong>"{linhaParaExcluir?.nome_linha}"</strong> da companhia <strong>{linhaParaExcluir?.companhia}</strong>?
+            <br />
+            <br />
+            <strong>Esta ação não pode ser desfeita.</strong>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={fecharDialogExclusao} disabled={carregando}>
+            Cancelar
+          </Button>
+          <Button 
+            onClick={excluirLinha} 
+            color="error" 
+            autoFocus
+            disabled={carregando}
+            startIcon={carregando ? <CircularProgress size={16} /> : <Delete />}
+          >
+            {carregando ? 'Excluindo...' : 'Excluir'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

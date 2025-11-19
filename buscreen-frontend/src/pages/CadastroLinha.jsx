@@ -14,6 +14,8 @@ import {
   MenuItem,
   Select
 } from '@mui/material';
+
+//-------------------------------------------------------------
 import { 
   DirectionsBus, 
   Save, 
@@ -35,7 +37,6 @@ const CadastroLinha = () => {
   const [carregando, setCarregando] = useState(false);
   const navigate = useNavigate();
 
-  // Companhias pré-cadastradas
   const companhias = [
     'Biguaçu',
     'Jotur', 
@@ -43,7 +44,6 @@ const CadastroLinha = () => {
     'Imperatriz'
   ];
 
-  // Horários em ordem crescente
   const horariosPadrao = [
     '05:00 - 23:00',
     '05:30 - 00:00',
@@ -66,7 +66,6 @@ const CadastroLinha = () => {
     setErro('');
     setSucesso('');
 
-    // Validações
     if (!formData.companhia || !formData.nome_linha || !formData.lotacao_maxima || !formData.horario) {
       setErro('Todos os campos são obrigatórios.');
       setCarregando(false);
@@ -80,7 +79,7 @@ const CadastroLinha = () => {
     }
 
     try {
-      console.log('🚌 Tentando cadastrar linha:', formData);
+      console.log('Tentando cadastrar linha:', formData);
       
       const response = await linhasAPI.create({
         companhia: formData.companhia,
@@ -89,11 +88,10 @@ const CadastroLinha = () => {
         horario: formData.horario
       });
 
-      console.log('✅ Linha cadastrada:', response.data);
+      console.log('Linha cadastrada:', response.data);
       
       setSucesso('Linha cadastrada com sucesso!');
       
-      // Limpa o formulário
       setFormData({
         companhia: '',
         nome_linha: '',
@@ -101,13 +99,12 @@ const CadastroLinha = () => {
         horario: ''
       });
 
-      // Opcional: redireciona após 2 segundos
       setTimeout(() => {
         navigate('/linhas');
       }, 2000);
 
     } catch (error) {
-      console.error('❌ Erro no cadastro:', error);
+      console.error('Erro no cadastro:', error);
       
       if (error.response?.data?.mensagem) {
         setErro(error.response.data.mensagem);
@@ -156,7 +153,7 @@ const CadastroLinha = () => {
               <Box component="form" onSubmit={handleSubmit}>
                 <Grid container spacing={3}>
                   
-                  {/* Companhia - tamanho aumentado */}
+
                   <Grid item xs={12} sm={7}>
                     <FormControl fullWidth>
                       <InputLabel>Companhia *</InputLabel>
@@ -176,7 +173,7 @@ const CadastroLinha = () => {
                     </FormControl>
                   </Grid>
 
-                  {/* Horário - tamanho reduzido */}
+
                   <Grid item xs={12} sm={5}>
                     <FormControl fullWidth>
                       <InputLabel>Horário *</InputLabel>
@@ -196,7 +193,6 @@ const CadastroLinha = () => {
                     </FormControl>
                   </Grid>
 
-                  {/* Nome da Linha - full width */}
                   <Grid item xs={12}>
                     <TextField
                       fullWidth

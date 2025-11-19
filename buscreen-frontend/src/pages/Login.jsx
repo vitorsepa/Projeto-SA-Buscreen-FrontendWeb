@@ -26,14 +26,14 @@ const Login = () => {
     setErro('');
 
     try {
-      console.log('🔍 Iniciando login...');
+      console.log('Iniciando login...');
       
       const response = await userAPI.login(email, senha);
-      console.log('✅ Resposta da API:', response.data);
+      console.log('Resposta da API:', response.data);
       
       if (response.data.usuario) {
         localStorage.setItem('usuario', JSON.stringify(response.data.usuario));
-        console.log('💾 Usuário salvo no localStorage');
+        console.log('Usuário salvo no localStorage');
         
         window.location.href = '/dashboard';
         return;
@@ -42,7 +42,7 @@ const Login = () => {
       }
       
     } catch (error) {
-      console.error('❌ Erro completo:', error);
+      console.error('Erro completo:', error);
       
       if (error.code === 'ECONNABORTED') {
         setErro('Tempo de conexão esgotado. O servidor pode estar iniciando.');
@@ -75,7 +75,7 @@ const Login = () => {
       >
         <Paper elevation={3} sx={{ padding: 4, width: '100%' }}>
           <Typography component="h1" variant="h4" align="center" gutterBottom color="primary">
-            🚌 BusScreen
+            BusScreen
           </Typography>
 
           {erro && (
@@ -122,14 +122,12 @@ const Login = () => {
             </Button>
           </Box>
 
-          {/* Link para cadastro */}
           <Box sx={{ textAlign: 'center', mt: 2 }}>
             <Link component={RouterLink} to="/cadastro" variant="body2">
               Não tem uma conta? Cadastre-se
             </Link>
           </Box>
 
-          {/* Botão de teste rápido */}
           <Box sx={{ textAlign: 'center', mt: 2 }}>
             <Button variant="outlined" size="small" onClick={testWithExample}>
               Preencher com dados de teste

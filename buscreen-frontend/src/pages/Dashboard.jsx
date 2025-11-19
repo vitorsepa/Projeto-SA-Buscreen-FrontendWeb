@@ -66,7 +66,7 @@ const Dashboard = () => {
       title: 'Minha Conta',
       description: 'Veja e edite suas informações de usuário',
       icon: <Person fontSize="large" color="success" />,
-      action: () => alert('Funcionalidade em desenvolvimento!'),
+      action: () => navigate('/perfil'),
       color: '#2e7d32'
     }
   ];
@@ -74,7 +74,6 @@ const Dashboard = () => {
   return (
     <Container maxWidth="lg">
       <Box sx={{ mt: 4, mb: 4 }}>
-        {/* Cabeçalho */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
           <Box>
             <Typography variant="h3" component="h1" gutterBottom>
@@ -92,7 +91,6 @@ const Dashboard = () => {
           </Button>
         </Box>
 
-        {/* Cards de Estatísticas */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid item xs={12} sm={4}>
             <Card>
