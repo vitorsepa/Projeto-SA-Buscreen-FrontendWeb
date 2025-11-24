@@ -64,78 +64,102 @@ const Login = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Paper elevation={3} sx={{ padding: 4, width: '100%' }}>
-          <Typography component="h1" variant="h4" align="center" gutterBottom color="primary">
-            BusScreen
-          </Typography>
+    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#FFB881', py: 4 }}>
+      <Container component="main" maxWidth="sm">
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Paper elevation={3} sx={{ padding: 4, width: '100%', backgroundColor: '#FFFFFF' }}>
+            <Typography component="h1" variant="h4" align="center" gutterBottom sx={{ color: '#7f3c00', fontWeight: 'bold' }}>
+              BusScreen
+            </Typography>
+            <Typography component="h2" variant="h6" align="center" gutterBottom sx={{ color: '#7f3c00', mb: 3 }}>
+              Faça login para acessar o sistema
+            </Typography>
 
-          {erro && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {erro}
-            </Alert>
-          )}
+            {erro && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {erro}
+              </Alert>
+            )}
 
-          <Box component="form" onSubmit={handleLogin} sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="E-mail"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={carregando}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="senha"
-              label="Senha"
-              type="password"
-              id="senha"
-              autoComplete="current-password"
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
-              disabled={carregando}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              disabled={carregando}
-            >
-              {carregando ? <CircularProgress size={24} /> : 'Entrar'}
-            </Button>
-          </Box>
+            <Box component="form" onSubmit={handleLogin} sx={{ mt: 1 }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="E-mail"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={carregando}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="senha"
+                label="Senha"
+                type="password"
+                id="senha"
+                autoComplete="current-password"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                disabled={carregando}
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ 
+                  mt: 3, 
+                  mb: 2,
+                  backgroundColor: '#FF8F4A',
+                  '&:hover': {
+                    backgroundColor: '#e07a38',
+                  },
+                  py: 1.5
+                }}
+                disabled={carregando}
+              >
+                {carregando ? <CircularProgress size={24} /> : 'Entrar'}
+              </Button>
+            </Box>
 
-          <Box sx={{ textAlign: 'center', mt: 2 }}>
-            <Link component={RouterLink} to="/cadastro" variant="body2">
-              Não tem uma conta? Cadastre-se
-            </Link>
-          </Box>
+            <Box sx={{ textAlign: 'center', mt: 2 }}>
+              <Link component={RouterLink} to="/cadastro" variant="body2" sx={{ color: '#7f3c00' }}>
+                Não tem uma conta? Cadastre-se
+              </Link>
+            </Box>
 
-          <Box sx={{ textAlign: 'center', mt: 2 }}>
-            <Button variant="outlined" size="small" onClick={testWithExample}>
-              Preencher com dados de teste
-            </Button>
-          </Box>
-        </Paper>
-      </Box>
-    </Container>
+            <Box sx={{ textAlign: 'center', mt: 2 }}>
+              <Button 
+                variant="outlined" 
+                size="small" 
+                onClick={testWithExample}
+                sx={{ 
+                  color: '#7f3c00', 
+                  borderColor: '#7f3c00',
+                  '&:hover': {
+                    borderColor: '#7f3c00',
+                    backgroundColor: 'rgba(127, 60, 0, 0.04)'
+                  }
+                }}
+              >
+                Preencher com dados de teste
+              </Button>
+            </Box>
+          </Paper>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 

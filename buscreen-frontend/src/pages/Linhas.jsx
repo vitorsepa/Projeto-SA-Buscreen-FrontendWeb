@@ -25,6 +25,7 @@ import {
   DialogActions,
   Alert
 } from '@mui/material';
+
 import { Search, Clear, DirectionsBus, Delete, Add } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { linhasAPI } from '../services/api';
@@ -123,9 +124,8 @@ const Linhas = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#FFB881' }}>
 
-      {/* NAV */}
       <Box sx={{
         display: 'flex',
         alignItems: 'center',
@@ -139,32 +139,58 @@ const Linhas = () => {
         <Typography variant="h6" sx={{ cursor: 'default' }}>
           Buscreen
         </Typography>
-        <Box sx={{ display: 'flex', gap: 3 }}>
-          {navItems.map((item) => (
-            <Typography
-              key={item}
-              sx={{
-                cursor: 'pointer',
-                color: '#fff',
-                fontWeight: 600,
-                '&:hover': { textDecoration: 'underline' }
-              }}
-              onClick={() => {
-                const path = item.toLowerCase().replace(' ', '-');
-                navigate(`/${path === 'home' ? '' : path}`);
-              }}
-            >
-              {item}
-            </Typography>
-          ))}
-        </Box>
+              <Box sx={{ display: 'flex', gap: 3 }}>
+        <Typography
+          sx={{
+            cursor: 'pointer',
+            color: '#fff',
+            fontWeight: 600,
+            '&:hover': { textDecoration: 'underline' }
+          }}
+          onClick={() => navigate('/dashboard')}
+        >
+          Home
+        </Typography>
+        <Typography
+          sx={{
+            cursor: 'pointer',
+            color: '#fff',
+            fontWeight: 600,
+            textDecoration: 'underline'
+          }}
+        >
+          Linhas
+        </Typography>
+        <Typography
+          sx={{
+            cursor: 'pointer',
+            color: '#fff',
+            fontWeight: 600,
+            '&:hover': { textDecoration: 'underline' }
+          }}
+          onClick={() => navigate('/perfil')}
+        >
+          Perfil
+        </Typography>
+        <Typography
+          sx={{
+            cursor: 'pointer',
+            color: '#fff',
+            fontWeight: 600,
+            '&:hover': { textDecoration: 'underline' }
+          }}
+          onClick={() => navigate('/sobre-nos')}
+        >
+          Sobre nós
+        </Typography>
+      </Box>
         <Button variant="contained" color="error" onClick={() => { localStorage.removeItem('usuario'); navigate('/login'); }}>
           Sair
         </Button>
       </Box>
 
-      {/* CONTEÚDO */}
-      <Container maxWidth="lg" sx={{ flexGrow: 1, py: 4 }}>
+      
+      <Container maxWidth="lg" sx={{ flexGrow: 1, py: 4, backgroundColor: '#FFB881' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           <Typography variant="h4" component="h1" sx={{ color: '#7f3c00' }}>
             Linhas de Ônibus
@@ -179,7 +205,7 @@ const Linhas = () => {
           </Button>
         </Box>
 
-        <Paper sx={{ p: 3, mb: 3, backgroundColor: '#FFE6CC' }}>
+        <Paper sx={{ p: 3, mb: 3, backgroundColor: '#FFFFFF' }}>
           <Typography variant="h6" gutterBottom sx={{ color: '#7f3c00' }}>
             Pesquisar Linha por ID
           </Typography>
@@ -221,7 +247,7 @@ const Linhas = () => {
 
         <Grid container spacing={3} sx={{ mb: 3 }}>
           <Grid item xs={12} sm={6}>
-            <Card sx={{ backgroundColor: '#FFE6CC' }}>
+            <Card sx={{ backgroundColor: '#FFFFFF' }}>
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                   <DirectionsBus color="primary" sx={{ mr: 2 }} />
@@ -232,7 +258,7 @@ const Linhas = () => {
             </Card>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Card sx={{ backgroundColor: '#FFE6CC' }}>
+            <Card sx={{ backgroundColor: '#FFFFFF' }}>
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                   <DirectionsBus color="secondary" sx={{ mr: 2 }} />
@@ -246,7 +272,7 @@ const Linhas = () => {
           </Grid>
         </Grid>
 
-        <Paper sx={{ width: '100%', overflow: 'hidden', backgroundColor: '#FFE6CC' }}>
+        <Paper sx={{ width: '100%', overflow: 'hidden', backgroundColor: '#FFFFFF' }}>
           <TableContainer>
             <Table stickyHeader>
               <TableHead>
@@ -310,13 +336,12 @@ const Linhas = () => {
           <Button variant="outlined" onClick={() => navigate('/dashboard')} sx={{ color: '#7f3c00', borderColor: '#7f3c00' }}>
             Voltar ao Dashboard
           </Button>
-          <Button variant="contained" onClick={carregarLinhas} disabled={carregando} sx={{ backgroundColor: '#FF8F4A', '&:hover': { backgroundColor: '#e07a38' } }}>
+          <Button variant="contained" onClick={carregarLinhas} disabled={carregando} sx={{ backgroundColor: '#7abf02', '&:hover': { backgroundColor: '#28bf02' } }}>
             Atualizar Lista
           </Button>
         </Box>
       </Container>
 
-      {/* Dialog Exclusão */}
       <Dialog open={dialogAberto} onClose={fecharDialogExclusao}>
         <DialogTitle>Confirmar Exclusão</DialogTitle>
         <DialogContent>
@@ -334,7 +359,6 @@ const Linhas = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Footer */}
       <Box sx={{ textAlign: 'center', py: 2, backgroundColor: '#FF8F4A', color: '#fff', fontWeight: 'bold', borderTop: '2px solid #e07a38', mt: 'auto' }}>
         © 2025 Buscreen. Todos os direitos reservados.
       </Box>

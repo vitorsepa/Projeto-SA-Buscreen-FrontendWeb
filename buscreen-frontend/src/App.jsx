@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import Linhas from './pages/Linhas';
 import CadastroLinha from './pages/CadastroLinha';
 import Perfil from './pages/Perfil';
+import SobreNos from './pages/SobreNos';
 
 const theme = createTheme({
   palette: {
@@ -16,7 +17,7 @@ const theme = createTheme({
     },
     secondary: {
       main: '#dc004e',
-    },
+    },  
   },
 });
 
@@ -87,6 +88,10 @@ function App() {
           <Route 
             path="/perfil" 
             element={isAuthenticated() ? <Perfil /> : <Navigate to="/login" />} 
+          />
+          <Route 
+            path="/sobre-nos" 
+            element={isAuthenticated() ? <SobreNos /> : <Navigate to="/login" />} 
           />
         </Routes>
       </Router>

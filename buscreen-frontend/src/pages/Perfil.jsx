@@ -1,27 +1,6 @@
 import React, { useState } from 'react';
-import {
-  Container,
-  Paper,
-  TextField,
-  Button,
-  Typography,
-  Box,
-  Alert,
-  CircularProgress,
-  Divider,
-  IconButton,
-  InputAdornment
-} from '@mui/material';
-import { 
-  Person, 
-  Edit, 
-  Save, 
-  Cancel,
-  Visibility, 
-  VisibilityOff,
-  Email,
-  Lock
-} from '@mui/icons-material';
+import { Container, Paper, TextField, Button, Typography, Box, Alert, CircularProgress, Divider, IconButton, InputAdornment } from '@mui/material';
+import { Person, Edit, Save, Cancel,Visibility, VisibilityOff,Email,Lock } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 const Perfil = () => {
@@ -32,10 +11,8 @@ const Perfil = () => {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const navigate = useNavigate();
 
-  // Pega os dados do usuário do localStorage
   const usuario = JSON.parse(localStorage.getItem('usuario'));
 
-  // Dados do formulário
   const [formData, setFormData] = useState({
     nome: usuario?.nome || '',
     email: usuario?.email || '',
@@ -55,7 +32,6 @@ const Perfil = () => {
     setErro('');
     setSucesso('');
     
-    // Se está cancelando a edição, restaura os dados originais
     if (editando) {
       setFormData({
         nome: usuario.nome,
@@ -72,7 +48,6 @@ const Perfil = () => {
     setErro('');
     setSucesso('');
 
-    // Validações
     if (!formData.nome || !formData.email) {
       setErro('Nome e e-mail são obrigatórios.');
       setCarregando(false);
@@ -92,36 +67,31 @@ const Perfil = () => {
     }
 
     try {
-      // Simula um delay de rede
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // ATUALIZA APENAS NO LOCALSTORAGE (frontend)
+      // -------------- ATUALIZA APENAS NO LOCALSTORAGE (frontend) --------------------------
       const usuarioAtualizado = {
         ...usuario,
         nome: formData.nome,
         email: formData.email
       };
 
-      // Salva no localStorage
       localStorage.setItem('usuario', JSON.stringify(usuarioAtualizado));
       
       setSucesso('Perfil atualizado com sucesso!');
       setEditando(false);
       
-      // Limpa os campos de senha
       setFormData({
         ...formData,
         senha: '',
         confirmarSenha: ''
       });
-
-      // Recarrega a página para refletir as mudanças
       setTimeout(() => {
         window.location.reload();
       }, 1500);
 
     } catch (error) {
-      console.error('❌ Erro ao atualizar perfil:', error);
+      console.error('Erro ao atualizar perfil:', error);
       setErro('Erro ao atualizar perfil. Tente novamente.');
     } finally {
       setCarregando(false);
@@ -132,25 +102,25 @@ const Perfil = () => {
     setMostrarSenha(!mostrarSenha);
   };
 
-  // Se não tem usuário logado, redireciona
   if (!usuario) {
     navigate('/login');
     return null;
   }
 
   return (
-    <Container maxWidth="sm">
+    <Container sx={{ backgroundColor: '#FFB881', minHeight: '100vh', py: 4 }}>
       <Box 
         sx={{ 
           mt: 4, 
           mb: 4,
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center'
+          alignItems: 'center',
+          backgroundColor: '#FFB881'
+          
         }}
       >
         
-        {/* Cabeçalho */}
         <Box sx={{ textAlign: 'center', mb: 4 }}>
           <Person fontSize="large" color="primary" sx={{ fontSize: 60, mb: 2 }} />
           <Typography variant="h4" component="h1" gutterBottom>
@@ -161,10 +131,8 @@ const Perfil = () => {
           </Typography>
         </Box>
 
-        {/* Card Principal */}
         <Paper elevation={3} sx={{ p: 4, width: '100%' }}>
           
-          {/* Cabeçalho do Card */}
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
             <Typography variant="h6">
               Informações da Conta
@@ -180,7 +148,6 @@ const Perfil = () => {
             </Button>
           </Box>
 
-          {/* Alertas */}
           {erro && (
             <Alert severity="error" sx={{ mb: 3 }}>
               {erro}
@@ -195,7 +162,6 @@ const Perfil = () => {
 
           <Box component="form" onSubmit={handleSalvar}>
             
-            {/* Informações Atuais (quando não está editando) */}
             {!editando && (
               <Box sx={{ mb: 3 }}>
                 <Box sx={{ mb: 2 }}>

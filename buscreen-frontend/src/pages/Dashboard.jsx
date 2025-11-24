@@ -1,16 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Typography,
-  Button
-} from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import {
-  DirectionsBus,
-  ListAlt,
-  Person
-} from '@mui/icons-material';
-
+import { DirectionsBus, ListAlt, Person } from '@mui/icons-material';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -76,25 +67,52 @@ const Dashboard = () => {
           Buscreen
         </Typography>
 
-        <Box sx={{ display: 'flex', gap: 3 }}>
-          {['Home', 'Linhas', 'Perfil', 'Sobre nós'].map((item) => (
-            <Typography
-              key={item}
-              sx={{
-                cursor: 'pointer',
-                color: '#fff',
-                fontWeight: 600,
-                '&:hover': { textDecoration: 'underline' }
-              }}
-              onClick={() => {
-                const path = item.toLowerCase().replace(' ', '-');
-                navigate(`/${path === 'home' ? '' : path}`);
-              }}
-            >
-              {item}
-            </Typography>
-          ))}
-        </Box>
+      <Box sx={{ display: 'flex', gap: 3 }}>
+        <Typography
+          sx={{
+          cursor: 'pointer',
+          color: '#fff',
+          fontWeight: 600,
+          '&:hover': { textDecoration: 'underline' }
+            }}
+          onClick={() => navigate('/dashboard')}
+        >
+          Home
+        </Typography>
+        <Typography
+          sx={{
+          cursor: 'pointer',
+          color: '#fff',
+          fontWeight: 600,
+          '&:hover': { textDecoration: 'underline' }
+    }}
+    onClick={() => navigate('/linhas')}
+  >
+    Linhas
+  </Typography>
+  <Typography
+    sx={{
+      cursor: 'pointer',
+      color: '#fff',
+      fontWeight: 600,
+      '&:hover': { textDecoration: 'underline' }
+    }}
+    onClick={() => navigate('/perfil')}
+  >
+    Perfil
+  </Typography>
+  <Typography
+    sx={{
+      cursor: 'pointer',
+      color: '#fff',
+      fontWeight: 600,
+      '&:hover': { textDecoration: 'underline' }
+    }}
+    onClick={() => navigate('/sobre-nos')}
+  >
+    Sobre nós
+  </Typography>
+</Box>
 
         <Button variant="contained" color="error" onClick={handleLogout}>
           Sair
@@ -103,7 +121,6 @@ const Dashboard = () => {
 
       <Box sx={{ flexGrow: 1, py: 3, px: 3, backgroundColor: '#FFB881', display: 'flex', gap: 3 }}>
         
-        {/* Mapa */}
         <Box sx={{
           flex: 1,
           backgroundColor: '#fff',
